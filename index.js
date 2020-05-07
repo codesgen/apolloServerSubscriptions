@@ -1,4 +1,4 @@
-const { ApolloServer, gql, PubSub } = require("apollo-server");
+const { ApolloServer, gql, PubSub, withFilter } = require("apollo-server");
 
 let employees = [
   {
@@ -75,7 +75,12 @@ const NEW_EMPLOYEE = "NEW_EMPLOYEE";
 const resolvers = {
   Subscription: {
     newEmployee: {
-      subscribe: () => pubsub.asyncIterator([NEW_EMPLOYEE]),
+      subscribe: withFilter(
+        () => pubsub.asyncIterator([NEW_EMPLOYEE]),
+        (payload, args) => {
+          return payload.newEmployee.employerId === args.employerId;
+        }
+      ),
     },
   },
   Query: {
