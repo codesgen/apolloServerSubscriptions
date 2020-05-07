@@ -78,7 +78,10 @@ const resolvers = {
       subscribe: withFilter(
         () => pubsub.asyncIterator([NEW_EMPLOYEE]),
         (payload, args) => {
-          return payload.newEmployee.employerId === args.employerId;
+          return (
+            !args.employerId ||
+            payload.newEmployee.employerId === args.employerId
+          );
         }
       ),
     },
